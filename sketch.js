@@ -15,4 +15,5 @@ function setup() {
 function draw() {
   background(220);
   player1.show();
+  player1.move();
 }
