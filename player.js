@@ -9,16 +9,33 @@ class Player{
         this.rotateSpeed = 2;
         this.score;
         this.img = image;
+
+
+        this.size = 20;
+
+        this.extraSize = 1.3;
+        this.collider = new BoxCollider(this.size, this.extraSize);
     }
 
     show(){
+        this.collider.show();
         push();
         translate((this.x), (this.y));
         rotate(radians(this.angle - 90));
         imageMode(CENTER);
-        image(this.img,0,0,20,20)
+        image(this.img, 0, 0, this.size, this.size)
         pop();
 
+        this.collider.show();
+
+
+    }
+
+    update(){
+
+        this.collider.updatePosition(this.x, this.y, this.angle + 45);
+        this.show();
+        this.move();
 
     }
 
