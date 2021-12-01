@@ -2,8 +2,8 @@ class Player{
 
     constructor(image){
         this.color = color(0);
-        this.x = 50;
-        this.y = 50;
+        this.x = 30;
+        this.y = 30;
         this.angle = random(0,360);
         this.speed = 1;
         this.rotateSpeed = 2;
@@ -14,11 +14,11 @@ class Player{
         this.size = 20;
 
         this.extraSize = 1.3;
-        this.collider = new BoxCollider(this.size, this.extraSize);
+        this.collider = new PlayerCollider(this.size, this.size, this.extraSize, this.x, this.y);
     }
 
     show(){
-        this.collider.show();
+        
         push();
         translate((this.x), (this.y));
         rotate(radians(this.angle - 90));
@@ -32,7 +32,7 @@ class Player{
     }
 
     update(){
-
+        this.collider.update();
         this.collider.updatePosition(this.x, this.y, this.angle + 45);
         this.show();
         this.move();
