@@ -33,7 +33,7 @@ class Collider {
         fill("green");
         noStroke();
 
-        rect(this.x, this.y, this.xSize * this.extraSize * 1.3, this.ySize * this.extraSize * 1.3);
+        
 
     }
 
@@ -70,20 +70,51 @@ class WallCollider extends Collider {
     update() {
 
         this.show();
+        this.boundingBox();
 
     }
 
     show(){
 
         strokeWeight(5);
+        stroke('purple');
 
         for (let i = 0; i < this.points.length; i++) {
             
-            point(this.points[i][0], this.points[i][1])
+            point(this.points[i][0], this.points[i][1]);
 
         }
     }
 
+    boundingBox() {
+        //Her vil der blive checket for om der er andre hitboxes i nærheden
+        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget
+
+        fill("green");
+        noStroke();
+        rectMode(CORNER)
+        rect(this.x - this.xSize * this.extraSize * 1.3 / 2, this.y  - this.ySize * this.extraSize * 1.3 / 2, this.xSize * this.extraSize * 1.3, this.ySize * this.extraSize * 1.3);
+
+        
+
+    }
+
+
+    
+
+
+
+}
+
+class bulletCollider extends Collider {
+
+    constructor(xSize, ySize, extraSize, x, y){
+
+        super(xSize, ySize, extraSize, x, y);
+
+        
+
+    }
 
 
 }
@@ -100,6 +131,60 @@ class PlayerCollider extends Collider {
 
         this.points = [[0, 0], [0, 0], [0, 0], [0, 0]];
 
+        this.insideBoundingBox;
+
+    }
+
+    update() {
+
+        this.boundingBox();
+        this.checkForCollition();
+        
+    }
+
+    updateShow() {
+
+        this.show();
+
+    }
+
+    boundingBox() {
+
+        this.insideBoundingBox = [];
+
+        for (let i = 0; i < hitboxes.length; i++) {
+
+            
+            
+            if(hitboxes[i] != this) {
+
+                
+                let hitbox = hitboxes[i];
+
+                if(this.x  - this.xSize * this.extraSize * 1.3 / 2 > hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 + hitbox.xSize * hitbox.extraSize 
+                    || hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 > this.x - this.xSize * this.extraSize * 1.3 / 2 + this.xSize * this.extraSize 
+                    || this.y - this.ySize * this.extraSize * 1.3 / 2 > hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 + hitbox.ySize * hitbox.extraSize 
+                    || hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 > this.y - this.ySize * this.extraSize * 1.3 / 2 + this.ySize * this.extraSize) { 
+                    
+                    continue;
+
+                } 
+
+                else {
+
+                    this.insideBoundingBox.push(hitboxes[i]);
+
+                }
+                
+            }
+
+        }
+
+        fill("green");
+        noStroke();
+        rectMode(CORNER)
+        rect(this.x - this.xSize * this.extraSize * 1.3 / 2, this.y - this.xSize * this.extraSize * 1.3  / 2, this.xSize * this.extraSize * 1.3, this.ySize * this.extraSize * 1.3);
+
     }
 
     updatePosition(x, y, angle){
@@ -114,8 +199,6 @@ class PlayerCollider extends Collider {
             this.points[i][1] = this.extraSize * this.size * cos(radians(this.angle + i * 90)) + this.y;
 
         }
-
-        this.checkForCollition();
 
     }
 
@@ -138,30 +221,82 @@ class PlayerCollider extends Collider {
         }
     }
 
+    
+
     checkForCollition(){
-        let check = 0;
-        for (let i = 0; i < this.points.length; i++) {
-            if(i === 3){
-                if(this.isLeft(this.points[i][0], this.points[i][1], this.points[i-3][0], this.points[i-3][1])){
 
-                    check++;
+        
 
+        //https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
+        //forklaring
+        //Determinant = det
+
+        
+
+        if(this.insideBoundingBox.length > 0) {
+
+            for (let i = 0; i < this.insideBoundingBox.length; i++) {
+                
+                let hitboxPoints = hitboxes[i].points;
+                
+                for (let i = 0; i < this.points.length - 1; i++) {
+                    
+                    for (let i = 0; i < hitboxPoints.length - 1; i++) {
+                        
+                        let c = this.points[i][0];
+                        let a = this.points[i][1];
+                        let s = this.points[i + 1][0];
+                        let q = this.points[i + 1][1];
+                        let r = hitboxPoints[i][0];
+                        let p = hitboxPoints[i][1];
+                        let d = hitboxPoints[i][0];
+                        let b = hitboxPoints[i][1];
+
+                        let det, gamma, lambda;
+
+                        det = (c - a) * (s - q) - (r - p) * (d - b);
+
+                        if (det === 0) {
+
+                            //return false;
+
+                        } else {
+
+                           
+
+                            lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+                            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+
+
+
+                            if(0 <  lambda < 1 && 0 <  gamma < 1) {
+
+                               print("hegh")
+
+                            }
+                            
+                            //return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+
+                        }
+                        
+                    }
+                    
                 }
-            } else{                
-                if(this.isLeft(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1])){
+                
+            }
 
-                    check++;
 
-                }
-            }            
+
+
         }
-    }
+        
+        
 
-    isLeft(x1,y1,x2,y2){
 
-        //Her fåes krys productet af de tre punkter
 
-        return ((x2 - x1)*(mouseY - y1) - (y2 - y1)*(mouseX - x1)) > 0;
+
+
+
     }
 
 }

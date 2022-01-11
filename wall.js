@@ -29,9 +29,10 @@ class Wall {
     }
 
     show() {
-
+        
         strokeWeight(2);
         rectMode(CENTER)
+        stroke('purple');
         if(this.direction === "xSide"){
 
             rect(this.x, this.y, 1 * this.size, 2);
@@ -41,6 +42,7 @@ class Wall {
             rect(this.x, this.y, 2, 1 * this.size);
 
         }
+        
     }
 
 

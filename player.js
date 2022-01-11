@@ -10,11 +10,12 @@ class Player{
         this.score;
         this.img = image;
 
-
         this.size = 20;
 
         this.extraSize = 1.3;
         this.collider = new PlayerCollider(this.size, this.size, this.extraSize, this.x, this.y);
+
+        this.lastPosition = [];
     }
 
     show(){
@@ -26,20 +27,22 @@ class Player{
         image(this.img, 0, 0, this.size, this.size)
         pop();
 
-        this.collider.show();
-
-
     }
 
     update(){
+        this.move();
         this.collider.update();
         this.collider.updatePosition(this.x, this.y, this.angle + 45);
+        this.lastPosition = [this.x, this.y, this.angle + 45];
         this.show();
-        this.move();
-
+        this.collider.updateShow();
+        this.spawnBullet();
+        
     }
 
     spawnBullet(){
+
+        
 
 
     }
@@ -48,12 +51,16 @@ class Player{
 
         if(keyIsDown(87)){
 
+            //bevæg frem ad
+
             this.x += cos(radians(this.angle)) * this.speed;
             this.y += sin(radians(this.angle)) * this.speed;
 
         }
 
         if(keyIsDown(83)){
+
+            //bevæg bag ud
 
             this.x -= cos(radians(this.angle)) * this.speed;
             this.y -= sin(radians(this.angle)) * this.speed;
@@ -62,11 +69,15 @@ class Player{
 
         if(keyIsDown(65)){
 
+            //rotere mod venstre
+
             this.angle -= this.rotateSpeed;
 
         }
 
         if(keyIsDown(68)){
+
+            //rotere mod højere
 
             this.angle += this.rotateSpeed;
 
