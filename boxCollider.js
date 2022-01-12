@@ -133,6 +133,23 @@ class PlayerCollider extends Collider {
 
         this.insideBoundingBox;
 
+        this.setPoints();
+
+    }
+
+    setPoints(){
+
+
+        this.points[0][0] = this.x - this.xSize / 2;
+        this.points[0][1] = this.y + this.ySize / 2;
+        this.points[1][0] = this.x + this.xSize / 2;
+        this.points[1][1] = this.y + this.ySize / 2;
+        this.points[2][0] = this.x + this.xSize / 2;
+        this.points[2][1] = this.y - this.ySize / 2;
+        this.points[3][0] = this.x - this.xSize / 2;
+        this.points[3][1] = this.y - this.ySize / 2;
+
+
     }
 
     update() {
@@ -161,10 +178,10 @@ class PlayerCollider extends Collider {
                 
                 let hitbox = hitboxes[i];
 
-                if(this.x  - this.xSize * this.extraSize * 1.3 / 2 > hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 + hitbox.xSize * hitbox.extraSize 
-                    || hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 > this.x - this.xSize * this.extraSize * 1.3 / 2 + this.xSize * this.extraSize 
-                    || this.y - this.ySize * this.extraSize * 1.3 / 2 > hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 + hitbox.ySize * hitbox.extraSize 
-                    || hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 > this.y - this.ySize * this.extraSize * 1.3 / 2 + this.ySize * this.extraSize) { 
+                if(this.x - this.xSize * this.extraSize * 1.3 / 2 > hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 + hitbox.xSize * hitbox.extraSize * 1.3 
+                    || hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 > this.x - this.xSize * this.extraSize * 1.3 / 2 + this.xSize * this.extraSize * 1.3 
+                    || this.y - this.ySize * this.extraSize * 1.3 / 2 > hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 + hitbox.ySize * hitbox.extraSize * 1.3 
+                    || hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 > this.y - this.ySize * this.extraSize * 1.3 / 2 + this.ySize * this.extraSize * 1.3) { 
                     
                     continue;
 
@@ -219,6 +236,14 @@ class PlayerCollider extends Collider {
 
             }
         }
+
+        strokeWeight(5);
+        stroke('purple');
+        for (let i = 0; i < this.points.length; i++) {
+            
+            point(this.points[i][0], this.points[i][1]);
+
+        }
     }
 
     
@@ -231,57 +256,72 @@ class PlayerCollider extends Collider {
         //forklaring
         //Determinant = det
 
-        
+        let hjjeejj = false;
 
         if(this.insideBoundingBox.length > 0) {
+            
 
             for (let i = 0; i < this.insideBoundingBox.length; i++) {
                 
                 let hitboxPoints = hitboxes[i].points;
                 
-                for (let i = 0; i < this.points.length - 1; i++) {
+                for (let i = 0; i < this.points.length; i++) {
                     
-                    for (let i = 0; i < hitboxPoints.length - 1; i++) {
-                        
-                        let c = this.points[i][0];
-                        let a = this.points[i][1];
-                        let s = this.points[i + 1][0];
-                        let q = this.points[i + 1][1];
-                        let r = hitboxPoints[i][0];
-                        let p = hitboxPoints[i][1];
-                        let d = hitboxPoints[i][0];
-                        let b = hitboxPoints[i][1];
+                    
+                    for (let i = 0; i < hitboxPoints.length; i++) {
 
-                        let det, gamma, lambda;
+                        let a, b, c, d, p, q, r, s
 
-                        det = (c - a) * (s - q) - (r - p) * (d - b);
 
-                        if (det === 0) {
-
-                            //return false;
-
-                        } else {
-
-                           
-
-                            lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
-                            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+                        if(i == hitboxPoints.length - 1) {
+                            a = this.points[i][0];
+                            b = this.points[i][1];
+                            c = this.points[0][0];
+                            d = this.points[0][1];
+                            p = hitboxPoints[i][0];
+                            q = hitboxPoints[i][1];
+                            r = hitboxPoints[0][0];
+                            s = hitboxPoints[0][1];
 
 
 
-                            if(0 <  lambda < 1 && 0 <  gamma < 1) {
-
-                               print("hegh")
-
-                            }
+                        } else if (i < hitboxPoints.length - 1) {
                             
-                            //return (0 < lambda && lambda < 1) && (0 < gamma && gamma < 1);
+                         
+
+                            a = this.points[i][0];
+                            b = this.points[i][1];
+                            c = this.points[i + 1][0];
+                            d = this.points[i + 1][1];
+                            p = hitboxPoints[i][0];
+                            q = hitboxPoints[i][1];
+                            r = hitboxPoints[i + 1][0];
+                            s = hitboxPoints[i + 1][1];
+
+                            
 
                         }
                         
+                        hjjeejj = false;
+
+                        let det, gamma, lambda;
+                        det = (c - a) * (s - q) - (r - p) * (d - b);
+                        if (det === 0) {
+                            
+                            continue
+                        } else {
+                            lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
+                            gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
+                            
+                            if(0 < lambda && lambda < 1) {hjjeejj = true;}
+                            if(0 < gamma && gamma < 1) {hjjeejj = true;}
+                        }
+                        
+                        
                     }
                     
-                }
+                }  
+                
                 
             }
 
@@ -290,7 +330,7 @@ class PlayerCollider extends Collider {
 
         }
         
-        
+        print(hjjeejj)
 
 
 

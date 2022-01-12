@@ -13,6 +13,9 @@ function preload() {
 }
 
 function setup() {
+
+  frameRate(60)
+
   createCanvas(60 * 10, 60 * 10);
 
   map = new Map(10);
