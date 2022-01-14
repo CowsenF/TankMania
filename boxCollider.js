@@ -69,7 +69,7 @@ class WallCollider extends Collider {
 
     update() {
 
-        this.show();
+        //this.show();
         this.boundingBox();
 
     }
@@ -86,19 +86,6 @@ class WallCollider extends Collider {
         }
     }
 
-    boundingBox() {
-        //Her vil der blive checket for om der er andre hitboxes i nærheden
-        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget
-
-        fill("green");
-        noStroke();
-        rectMode(CORNER)
-        rect(this.x - this.xSize * this.extraSize * 1.3 / 2, this.y  - this.ySize * this.extraSize * 1.3 / 2, this.xSize * this.extraSize * 1.3, this.ySize * this.extraSize * 1.3);
-
-        
-
-    }
-
 
     
 
@@ -106,14 +93,97 @@ class WallCollider extends Collider {
 
 }
 
-class bulletCollider extends Collider {
+class BulletCollider extends Collider {
 
     constructor(xSize, ySize, extraSize, x, y){
 
         super(xSize, ySize, extraSize, x, y);
 
+        this.size = (xSize + ySize) / 2 / 2;
+
+        this.angle;
+
+        this.insideBoundingBox = [];
+
+    }
+
+    boundingBox() {
+
+        this.insideBoundingBox = [];
+
+        for (let i = 0; i < hitboxes.length; i++) {
+
+            
+            
+            if(hitboxes[i] != this && hitboxes[i].constructor == BulletCollider) {
+
+                let hitbox = hitboxes[i];
+
+                if(this.x - this.xSize * this.extraSize * 1.3 / 2 > hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 + hitbox.xSize * hitbox.extraSize * 1.3 
+                    || hitbox.x - hitbox.xSize * hitbox.extraSize * 1.3 / 2 > this.x - this.xSize * this.extraSize * 1.3 / 2 + this.xSize * this.extraSize * 1.3 
+                    || this.y - this.ySize * this.extraSize * 1.3 / 2 > hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 + hitbox.ySize * hitbox.extraSize * 1.3 
+                    || hitbox.y - hitbox.ySize * hitbox.extraSize * 1.3 / 2 > this.y - this.ySize * this.extraSize * 1.3 / 2 + this.ySize * this.extraSize * 1.3) { 
+                    
+                    continue;
+
+                } 
+
+                else {
+
+                    this.insideBoundingBox.push(hitboxes[i]);
+
+                }
+                
+            }
+
+        }
+    }
+
+    update() {
+
+        this.boundingBox();
+        
+    }
+
+    updatePosition(x, y, angle){
+
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+
+        rect(this.x, this.y, this.size, this.size);
+
+    }
+
+    checkForCollition(x, y, angle){
+
         
 
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+
+        for (let i = 0; i < this.points.length; i++) {
+            
+            this.points[i][0] = this.extraSize * this.size * -sin(radians(this.angle + i * 90)) + this.x;
+            this.points[i][1] = this.extraSize * this.size * cos(radians(this.angle + i * 90)) + this.y;
+
+        }
+
+        if(this.insideBoundingBox.length > 0) {
+            
+            for (let i = 0; i < this.insideBoundingBox.length; i++) {
+                
+                let hitboxPoints = this.insideBoundingBox[i].points;
+                
+                for (let j = 0; j < hitboxPoints.length; j++) {
+                    
+                    
+                    
+                }   
+            }
+        }
+        return false
     }
 
 
@@ -155,14 +225,7 @@ class PlayerCollider extends Collider {
     update() {
 
         this.boundingBox();
-        this.checkForCollition();
         
-    }
-
-    updateShow() {
-
-        this.show();
-
     }
 
     boundingBox() {
@@ -173,7 +236,7 @@ class PlayerCollider extends Collider {
 
             
             
-            if(hitboxes[i] != this) {
+            if(hitboxes[i] != this && hitboxes[i].constructor == WallCollider) {
 
                 
                 let hitbox = hitboxes[i];
@@ -196,12 +259,6 @@ class PlayerCollider extends Collider {
             }
 
         }
-
-        fill("green");
-        noStroke();
-        rectMode(CORNER)
-        rect(this.x - this.xSize * this.extraSize * 1.3 / 2, this.y - this.xSize * this.extraSize * 1.3  / 2, this.xSize * this.extraSize * 1.3, this.ySize * this.extraSize * 1.3);
-
     }
 
     updatePosition(x, y, angle){
@@ -219,124 +276,86 @@ class PlayerCollider extends Collider {
 
     }
 
-    show(){
-
-        stroke('purple');
-        strokeWeight(2);
-
-        for (let i = 0; i < this.points.length; i++) {
-            point(this.points[i][0], this.points[i][1]);
-            if(i === 3){
-
-                line(this.points[i][0], this.points[i][1], this.points[i-3][0], this.points[i-3][1])
-
-            } else{                
-
-                line(this.points[i][0], this.points[i][1], this.points[i+1][0], this.points[i+1][1]);
-
-            }
-        }
-
-        strokeWeight(5);
-        stroke('purple');
-        for (let i = 0; i < this.points.length; i++) {
-            
-            point(this.points[i][0], this.points[i][1]);
-
-        }
-    }
-
-    
-
-    checkForCollition(){
-
-        
+    checkForCollitionForNewMove(x, y, angle){
 
         //https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
         //forklaring
         //Determinant = det
 
-        let hjjeejj = false;
+        this.x = x;
+        this.y = y;
+        this.angle = angle;
+
+        for (let i = 0; i < this.points.length; i++) {
+            
+            this.points[i][0] = this.extraSize * this.size * -sin(radians(this.angle + i * 90)) + this.x;
+            this.points[i][1] = this.extraSize * this.size * cos(radians(this.angle + i * 90)) + this.y;
+
+        }
 
         if(this.insideBoundingBox.length > 0) {
+            
             
 
             for (let i = 0; i < this.insideBoundingBox.length; i++) {
                 
-                let hitboxPoints = hitboxes[i].points;
+                let hitboxPoints = this.insideBoundingBox[i].points;
                 
-                for (let i = 0; i < this.points.length; i++) {
+                for (let j = 0; j < this.points.length; j++) {
                     
                     
-                    for (let i = 0; i < hitboxPoints.length; i++) {
-
+                    for (let h = 0; h < hitboxPoints.length; h++) {
+                       
                         let a, b, c, d, p, q, r, s
 
+                        if(h == 3) {
 
-                        if(i == hitboxPoints.length - 1) {
-                            a = this.points[i][0];
-                            b = this.points[i][1];
-                            c = this.points[0][0];
-                            d = this.points[0][1];
-                            p = hitboxPoints[i][0];
-                            q = hitboxPoints[i][1];
-                            r = hitboxPoints[0][0];
-                            s = hitboxPoints[0][1];
+                            p = hitboxPoints[h][0];
+                            q = hitboxPoints[h][1];
+                            r = hitboxPoints[h-3][0];
+                            s = hitboxPoints[h-3][1];
 
+                        } else if (h < 3) {
 
-
-                        } else if (i < hitboxPoints.length - 1) {
-                            
-                         
-
-                            a = this.points[i][0];
-                            b = this.points[i][1];
-                            c = this.points[i + 1][0];
-                            d = this.points[i + 1][1];
-                            p = hitboxPoints[i][0];
-                            q = hitboxPoints[i][1];
-                            r = hitboxPoints[i + 1][0];
-                            s = hitboxPoints[i + 1][1];
-
-                            
+                            p = hitboxPoints[h][0];
+                            q = hitboxPoints[h][1];
+                            r = hitboxPoints[h + 1][0];
+                            s = hitboxPoints[h + 1][1];
 
                         }
-                        
-                        hjjeejj = false;
 
-                        let det, gamma, lambda;
+                        if(j == 3) {
+                            
+                            a = this.points[j][0];
+                            b = this.points[j][1];
+                            c = this.points[j-3][0];
+                            d = this.points[j-3][1];                            
+
+                        } else if (j < 3) {
+
+                            a = this.points[j][0];
+                            b = this.points[j][1];
+                            c = this.points[j + 1][0];
+                            d = this.points[j + 1][1];
+
+                        }
+
+                        var det, gamma, lambda;
                         det = (c - a) * (s - q) - (r - p) * (d - b);
                         if (det === 0) {
-                            
                             continue
                         } else {
                             lambda = ((s - q) * (r - a) + (p - r) * (s - b)) / det;
                             gamma = ((b - d) * (r - a) + (c - a) * (s - b)) / det;
                             
-                            if(0 < lambda && lambda < 1) {hjjeejj = true;}
-                            if(0 < gamma && gamma < 1) {hjjeejj = true;}
+                            if((0 < lambda && lambda < 1) && (0 < gamma && gamma < 1)) {return true}
+                            continue
                         }
-                        
-                        
                     }
-                    
-                }  
-                
-                
+                }   
             }
-
-
-
-
         }
-        
-        print(hjjeejj)
-
-
-
-
-
-
+        return false
     }
 
 }

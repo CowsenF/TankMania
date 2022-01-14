@@ -1,3 +1,6 @@
+//Map class bruges til at holde styr på murene i spillet
+//Den spawnere murene og updatere dem
+
 class Map {
 
     constructor(size){
@@ -11,12 +14,17 @@ class Map {
             
         }
         this.wallHolder = [];
-        this.wallConstructor()
+        this.wallConstructor();
 
         
     }
 
     wallConstructor(){
+
+        this.wallHolder.push(new Wall(0, 0, width, 0, "xSide", width))
+        this.wallHolder.push(new Wall(width, 0, width, height, "ySide", height))
+        this.wallHolder.push(new Wall(width, height, 0, height, "xSide", width))
+        this.wallHolder.push(new Wall(0, height, 0, 0, "ySide", height))
 
         for (let i = 0; i < this.size; i++) {
             for (let j = 0; j < this.size; j++) {
@@ -44,27 +52,10 @@ class Map {
 
     update(){
 
-        this.show();
-
         for (let i = 0; i < this.wallHolder.length; i++) {
             this.wallHolder[i].update();
         }
 
     }
-
-    show(){
-
-        stroke('purple');
-        strokeWeight(6);
-        line(0, 0, this.size * this.gap, 0);
-        line(this.size * this.gap, 0, this.size * this.gap, this.size * this.gap);
-        line(this.size * this.gap, this.size * this.gap, 0, this.size * this.gap);
-        line(0, this.size * this.gap, 0, 0);
-
-        
-
-    }
-
-
 
 }

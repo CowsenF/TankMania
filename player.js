@@ -1,9 +1,9 @@
 class Player{
 
-    constructor(image){
+    constructor(image, x, y, playerInput){
         this.color = color(0);
-        this.x = 30;
-        this.y = 30;
+        this.x = x;
+        this.y = y;
         this.angle = random(0,360);
         this.speed = 1;
         this.rotateSpeed = 2;
@@ -15,7 +15,11 @@ class Player{
         this.extraSize = 1.3;
         this.collider = new PlayerCollider(this.size, this.size, this.extraSize, this.x, this.y);
 
-        this.lastPosition = [];
+
+        this.playerInput = playerInput;
+
+        this.pressedFire = true;
+
     }
 
     show(){
@@ -30,59 +34,88 @@ class Player{
     }
 
     update(){
+        
         this.move();
         this.collider.update();
         this.collider.updatePosition(this.x, this.y, this.angle + 45);
-        this.lastPosition = [this.x, this.y, this.angle + 45];
         this.show();
-        this.collider.updateShow();
-        this.spawnBullet();
         
-    }
-
-    spawnBullet(){
-
-        
-
-
     }
 
     move(){
 
-        if(keyIsDown(87)){
+        if(keyIsDown(this.playerInput.bevægFremAd)){
 
             //bevæg frem ad
 
-            this.x += cos(radians(this.angle)) * this.speed;
-            this.y += sin(radians(this.angle)) * this.speed;
+            if(this.collider.checkForCollitionForNewMove(this.x + cos(radians(this.angle)) * this.speed, this.y + sin(radians(this.angle)) * this.speed, this.angle + 45) == false) {
+                
+                this.x += cos(radians(this.angle)) * this.speed;
+                this.y += sin(radians(this.angle)) * this.speed;
+
+            }
+            
 
         }
 
-        if(keyIsDown(83)){
+        if(keyIsDown(this.playerInput.bevægBagUd)){
 
             //bevæg bag ud
 
-            this.x -= cos(radians(this.angle)) * this.speed;
-            this.y -= sin(radians(this.angle)) * this.speed;
+            if(this.collider.isColliding != true) {
+
+                if(this.collider.checkForCollitionForNewMove(this.x - cos(radians(this.angle)) * this.speed, this.y - sin(radians(this.angle)) * this.speed, this.angle + 45) == false) {
+                    
+                    this.x -= cos(radians(this.angle)) * this.speed;
+                    this.y -= sin(radians(this.angle)) * this.speed;
+    
+                }
+
+            }
+
+            
 
         }
 
-        if(keyIsDown(65)){
+        if(keyIsDown(this.playerInput.rotereModVenstre)){
 
             //rotere mod venstre
 
-            this.angle -= this.rotateSpeed;
+            if(this.collider.checkForCollitionForNewMove(this.x, this.y, this.angle + 45 - this.rotateSpeed) == false) {
+                    
+                this.angle -= this.rotateSpeed;
+
+            }
+
+            
 
         }
 
-        if(keyIsDown(68)){
+        if(keyIsDown(this.playerInput.rotereModHøjere)){
 
             //rotere mod højere
 
-            this.angle += this.rotateSpeed;
+            if(this.collider.checkForCollitionForNewMove(this.x, this.y, this.angle + 45 + this.rotateSpeed) == false) {
+                    
+                this.angle += this.rotateSpeed;
+
+            }
 
         }
 
+        if(keyIsDown(this.playerInput.fire) && this.pressedFire == false) {
+
+            //Tilføj et nyt skud til spillet
+
+            bullets.push(new Bullet(this.x, this.y, this.angle));
+
+            this.pressedFire = true;
+
+        } else if(keyIsDown(this.playerInput.fire) == false) {
+
+            this.pressedFire = false;
+
+        }
         
 
     }
