@@ -11,11 +11,11 @@ class Wall {
 
         if(this.direction === "xSide") {
 
-            this.collider = new WallCollider(1 * this.size, 2, 1, this.x, this.y);
+            this.collider = new WallCollider(1 * this.size, 2, 1, this.x, this.y, this.direction);
 
         } else if(this.direction === "ySide"){
 
-            this.collider = new WallCollider(2, 1 * this.size, 1, this.x, this.y);
+            this.collider = new WallCollider(2, 1 * this.size, 1, this.x, this.y, this.direction);
 
         }
 

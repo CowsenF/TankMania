@@ -42,13 +42,15 @@ class Collider {
 
 class WallCollider extends Collider {
 
-    constructor(xSize, ySize, extraSize, x, y) {
+    constructor(xSize, ySize, extraSize, x, y, direction) {
 
         super(xSize, ySize, extraSize, x, y);
 
         this.points = [[0, 0], [0, 0], [0, 0], [0, 0]];
 
-        this.setPoints()
+        this.setPoints();
+
+        this.direction = direction;
 
     }
 
@@ -115,7 +117,7 @@ class BulletCollider extends Collider {
 
             
             
-            if(hitboxes[i] != this && hitboxes[i].constructor == BulletCollider) {
+            if(hitboxes[i] != this && hitboxes[i].constructor != BulletCollider) {
 
                 let hitbox = hitboxes[i];
 
@@ -129,7 +131,7 @@ class BulletCollider extends Collider {
                 } 
 
                 else {
-
+                    
                     this.insideBoundingBox.push(hitboxes[i]);
 
                 }
@@ -151,40 +153,19 @@ class BulletCollider extends Collider {
         this.y = y;
         this.angle = angle;
 
-        rect(this.x, this.y, this.size, this.size);
-
-    }
-
-    checkForCollition(x, y, angle){
-
         
 
-        this.x = x;
-        this.y = y;
-        this.angle = angle;
-
-        for (let i = 0; i < this.points.length; i++) {
-            
-            this.points[i][0] = this.extraSize * this.size * -sin(radians(this.angle + i * 90)) + this.x;
-            this.points[i][1] = this.extraSize * this.size * cos(radians(this.angle + i * 90)) + this.y;
-
-        }
-
-        if(this.insideBoundingBox.length > 0) {
-            
-            for (let i = 0; i < this.insideBoundingBox.length; i++) {
-                
-                let hitboxPoints = this.insideBoundingBox[i].points;
-                
-                for (let j = 0; j < hitboxPoints.length; j++) {
-                    
-                    
-                    
-                }   
-            }
-        }
-        return false
     }
+
+    isLeft(x1,y1,x2,y2){
+
+        //Her fåes krys productet af de tre punkter
+
+        return ((x2 - x1)*(this.y - y1) - (y2 - y1)*(this.x - x1)) > 0;
+    }
+
+        
+    
 
 
 }

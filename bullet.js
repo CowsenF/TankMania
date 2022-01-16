@@ -3,8 +3,8 @@ class Bullet {
     constructor(x, y, angle) {
 
         this.angle = angle;
-        this.x = x + cos(radians(this.angle)) * 10;
-        this.y = y + sin(radians(this.angle)) * 10;
+        this.x = x + cos(radians(this.angle));
+        this.y = y + sin(radians(this.angle));
 
         this.size = 5;
 
@@ -18,11 +18,13 @@ class Bullet {
 
     update() {
 
-        this.draw();
-        this.move();
         this.timer();
+        this.move();
+        
         this.collider.update();
-        this.collider.updatePosition(this.x, this.y, this.angle + 45);
+        this.collider.updatePosition(this.x, this.y, this.angle);
+
+        this.draw();
 
     }
 
@@ -61,5 +63,5 @@ class Bullet {
         this.y += sin(radians(this.angle)) * this.speed;
 
     }
-    
+
 }
