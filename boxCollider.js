@@ -28,12 +28,7 @@ class Collider {
 
     boundingBox() {
         //Her vil der blive checket for om der er andre hitboxes i nærheden
-        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget
-
-        fill("green");
-        noStroke();
-
-        
+        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget 
 
     }
 
