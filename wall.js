@@ -24,7 +24,6 @@ class Wall {
     update() {
 
         this.show();
-        this.collider.update();
 
     }
 

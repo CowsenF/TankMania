@@ -1,9 +1,9 @@
 let player1;
-let blackTankImg;
 let player1Input;
-
 let player2;
 let player2Input;
+
+let blackTankImg;
 
 let map;
 

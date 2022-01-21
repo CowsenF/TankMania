@@ -20,19 +20,6 @@ class Collider {
 
     }
 
-
-
-    update() {
-        this.boundingBox();
-    }
-
-    boundingBox() {
-        //Her vil der blive checket for om der er andre hitboxes i nærheden
-        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget 
-
-    }
-
-
 }
 
 class WallCollider extends Collider {
@@ -64,30 +51,6 @@ class WallCollider extends Collider {
 
     }
 
-    update() {
-
-        //this.show();
-        this.boundingBox();
-
-    }
-
-    show(){
-
-        strokeWeight(5);
-        stroke('purple');
-
-        for (let i = 0; i < this.points.length; i++) {
-            
-            point(this.points[i][0], this.points[i][1]);
-
-        }
-    }
-
-
-    
-
-
-
 }
 
 class BulletCollider extends Collider {
@@ -104,7 +67,14 @@ class BulletCollider extends Collider {
 
     }
 
+    update() {
+        this.boundingBox();
+    }
+
     boundingBox() {
+
+        //Her vil der blive checket for om der er andre hitboxes i nærheden
+        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget
 
         this.insideBoundingBox = [];
 
@@ -134,12 +104,6 @@ class BulletCollider extends Collider {
             }
 
         }
-    }
-
-    update() {
-
-        this.boundingBox();
-        
     }
 
     updatePosition(x, y, angle){
@@ -206,6 +170,9 @@ class PlayerCollider extends Collider {
 
     boundingBox() {
 
+        //Her vil der blive checket for om der er andre hitboxes i nærheden
+        //Hvis der er så vil den lave klad for at begynde at renge for om den rammer noget
+
         this.insideBoundingBox = [];
 
         for (let i = 0; i < hitboxes.length; i++) {
@@ -253,10 +220,6 @@ class PlayerCollider extends Collider {
     }
 
     checkForCollitionForNewMove(x, y, angle){
-
-        //https://stackoverflow.com/questions/9043805/test-if-two-lines-intersect-javascript-function
-        //forklaring
-        //Determinant = det
 
         this.x = x;
         this.y = y;
